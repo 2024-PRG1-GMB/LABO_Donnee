@@ -1,48 +1,68 @@
-## Nombres 1er
+## Calendrier
 
 ### Objectif
-Ecrire un programme qui affiche tous les nombres premiers compris entre 1 et une valeur saisie par l’utilisateur.
+- Mise en page soignée
+- Interface utilisateur
+- Structures de controles
+- Sous-programmes
+- Compilation séparée
 
 ### A faire
-1. Saisir une valeur `limite` comprise entre `2` et `1'000`.
-	- Si `limite ` est en dehors des bornes, l'utilisateur est invité à refaire sa saisie.
-	- Nous partons du principe qu'il n'y a pas d'erreur de saisie (`a` par exemple).
-2. Calculer et afficher sur 5 colonnes tous les nombres 1er compris dans l'intervalle `[1 .. N]`
-    - La mise en page peut être simplement gérée avec une tabulation `cout << '\t' << nbre << " ";`
-3. Un menu `Voulez-vous recommencer [O/N]` pour quitter ou recommencer.
-	- Seuls les caractères `O` ou `N` sont acceptés, sinon une nouvelle saisie est faite.
+Ecrire un programme qui affiche pour une année [1800 – 2100] saisie par
+l’utilisateur le calendrier complet en tenant compte des années bissextiles.
 
-<br>
-L'affichage suivant est attendu
+~~~
+ce programme ...
+entrer une valeur [1800 - 2100] : 1754
+/!\ erreur de saisie
+entrer une valeur [1800 - 2100] : 2024
+janvier 2024
+ L  M  M  J  V  S  D
+                1  2 
+ 3  4  5  6  7  8  9 
+10 11 12 13 14 15 16 
+17 18 19 20 21 22 23 
+24 25 26 27 28 29 30 
+31 
 
-~~~cpp
-Ce programme ...
+février 2024
+ L  M  M  J  V  S  D
+    1  2  3  4  5  6 
+ 7  8  9 10 11 12 13 
+14 15 16 17 18 19 20 
+21 22 23 24 25 26 27 
+28 29 
 
-entrer une valeur [2-1000] : 1 
-entrer une valeur [2-1000] : 1001
-entrer une valeur [2-1000] : 55
+...
 
-Voici la liste des nombres premiers
-        2       3       5       7       11 
-        13      17      19      23      29 
-        31      37      41      43      47 
-        53 
+decembre 2024
+ L  M  M  J  V  S  D
+             1  2  3 
+ 4  5  6  7  8  9 10 
+11 12 13 14 15 16 17 
+18 19 20 21 22 23 24 
+25 26 27 28 29 30 31 
 
-Voulez-vous recommencer [O/N] : a
-Voulez-vous recommencer [O/N] : N
+voulez-vous continuer [O|N] : a
+voulez-vous continuer [O|N] : n
 
-Fin de programme
+le programme est termine
 ~~~
 
-### Remarques
-- Pensez à faire l'analyse avant de coder
-- La présentation de code est à soigner tout particulièrement
-- Ne pas utiliser de sous-programme
+### Complément
+- L'affichage doit correspondre à l'exemple ci-dessus.
+- En cas de saisie incorrecte, l’utilisateur est invité à recommencer sa saisie.
+- Une année est bissextile si elle est divisible par 400, ou par 4 et pas par 100.
+- Un menu « voulez-vous recommencer [O/N] » permet de quitter ou recommencer l’opération.
+- Tous les « 1 janvier » sont des lundis … à moins que vous ayiez envie de faire mieux.
+  <br>La librairie [ctime](http://www.cplusplus.com/reference/ctime) peut vous aider 😉.
+- Soigner particulièrement la présentation du code.
+- Les erreurs de saisie ne sont pas à gérer.
+- Les fonctions seront disposées dans une ou plusieurs librairies. [cf démo](https://github.com/gmbreguet/PRG1_GMB_DEMO/tree/main/04_Fonctions/04_librairie)
 
 ### Modalités
+- groupe de **1 étudiants**
 - 4 périodes
-- **à faire seul(e)**
-- à rendre dans le git classroom selon les indications des assistants
 
 ---
 Bon travail
