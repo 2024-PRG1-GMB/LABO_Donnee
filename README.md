@@ -187,7 +187,7 @@ Un seul fichier `.csv` (comma separated value) contient toutes les données des 
 - A l'affichage, les dates sont au format `DD-MON-YYYY` (ie 07-NOV-2024).
 - Toutes les erreurs saisies sont traitées.
 - Les menus peuvent varier d'une section à l'autre.
-- les `id` sont générés automatiquement par le programme.
+- Les `id` sont générés automatiquement par le programme.
 - ⚠️ Utiliser au mieux tout ce qui a été vu au cours.
 
 ### Copies d'écran
