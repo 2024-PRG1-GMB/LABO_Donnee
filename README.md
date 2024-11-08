@@ -1,7 +1,7 @@
 ## Base de données clients
 
 ### Objectif
-- Fichiers texte in/out
+- fichiers texte in/out
 - enum, struct, ...
 - string, ...
 - tableau, ...
@@ -63,7 +63,7 @@ Une transaction liste les achats de produits par les clients avec les données s
 | date           | date d'achat                |
 
 <br>
-Au début du programme, l'utilisateur est invité à saisir le nom du fichier `.csv` contenant les informations à charger dans des tableaux.
+Au début du programme, l'utilisateur est invité à saisir le nom du fichier `.csv` contenant contenant les informations à charger dans des tableaux.
 
 Un seul fichier `.csv` (comma separated value) contient toutes les données des customers, des products et des transactions afin d'assurer la cohérence de données. Il est formaté comme suit : 
 
