@@ -206,7 +206,7 @@ Main menu
    1 Product
    2 Transaction
    3 Quit
-your choice [0-4] : 
+your choice [0-3] : 
 ~~~
 
 </details>
@@ -220,13 +220,13 @@ Main menu
    1 Product
    2 Transaction
    3 Quit
-your choice [0-4] : 0
+your choice [0-3] : 0
 
 Customer
    0 Add
    1 List
    2 Exit
-Your choice [0-3] : 2
+Your choice [0-2] : 2
 ~~~
 
 </details>
@@ -239,7 +239,7 @@ Customer
    0 Add
    1 List
    2 Exit
-Your choice [0-3] : 0
+Your choice [0-2] : 0
 
 new customer
 name     : nouveau
@@ -258,7 +258,7 @@ Customer
    0 Add
    1 List
    2 Exit
-Your choice [0-3] : 1
+Your choice [0-2] : 1
 
 id       : 0
 name     : Megan Robinson
@@ -284,13 +284,13 @@ Main menu
    1 Product
    2 Transaction
    3 Quit
-your choice [0-4] : 1
+your choice [0-3] : 1
 
 Product
    0 Add
    1 List
    2 Exit
-Your choice [0-3] : 2
+Your choice [0-2] : 2
 ~~~
 
 </details>
@@ -303,7 +303,7 @@ Product
    0 Add
    1 List
    2 Exit
-Your choice [0-3] : 0
+Your choice [0-2] : 0
 
 new product
 name     : name
@@ -321,7 +321,7 @@ Product
    0 Add
    1 List
    2 Exit
-Your choice [0-3] : 1
+Your choice [0-2] : 1
 
 id       : 0
 name     : Sous Vide Machine
@@ -347,13 +347,13 @@ Main menu
    1 Product
    2 Transaction
    3 Quit
-your choice [0-4] : 2
+your choice [0-3] : 2
 
 Transaction
    0 Add
    1 List
    2 Exit
-Your choice [0-3] : 2
+Your choice [0-2] : 2
 ~~~
 
 </details>
@@ -366,11 +366,11 @@ Transaction
    0 Add
    1 List
    2 Exit
-Your choice [0-3] : 0
+Your choice [0-2] : 0
 
 new transaction
-cust id [1-21] : 1
-prod id [1-51] : 2
+cust id [0-21] : 1
+prod id [0-51] : 2
 date : 12-12-2024
 ~~~
 
@@ -384,7 +384,7 @@ Transaction
    0 Add
    1 List
    2 Exit
-Your choice [0-3] : 1
+Your choice [0-2] : 1
 
 customer : Amy Wilson
 product  : Stylus Pen
@@ -410,7 +410,7 @@ Main menu
    1 Product
    2 Transaction
    3 Quit
-your choice [0-4] : 3
+your choice [0-3] : 3
 
 Quit
 save databases [Y/N] : n
