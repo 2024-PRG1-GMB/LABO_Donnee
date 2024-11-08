@@ -1,10 +1,11 @@
 ## Base de données clients
 
 ### Objectif
-- Fichier texte in/out
-- `string` et `stringstream`
-- `enum` et `struct`
-- tableaux
+- Fichiers texte in/out
+- enum, struct, ...
+- string, ...
+- tableau, ...
+- architecture informatique
 
 ### A faire
 
@@ -22,9 +23,9 @@ Le menu principal de l'application permet d'aller dans les menus spécifiques qu
 
 | Menu    | Actions                                                                                   |
 |:--------|:------------------------------------------------------------------------------------------|
-| `ADD`   | ajouter un enregistrement                                                                 |
-| `LIST`  | lister à l'écran tous les enregistrements au format prévu                                 |
-| `EXIT`  | revenir au menu principal                                                                 |
+| `ADD`   | Ajouter un enregistrement                                                                 |
+| `LIST`  | Lister à l'écran tous les enregistrements                                                 |
+| `EXIT`  | Revenir au menu principal                                                                 |
 | `QUIT`  | Inviter l'utilisateur à sauver ses données sur fichier et à confirmer la fin du programme |
 
 
@@ -186,21 +187,237 @@ Un seul fichier `.csv` (comma separated value) contient toutes les données des 
 - A l'affichage, les dates sont au format `DD-MON-YYYY` (ie 07-NOV-2024).
 - Toutes les erreurs saisies sont traitées.
 - Les menus peuvent varier d'une section à l'autre.
+- les `id` sont générés automatiquement par le programme.
 - ⚠️ Utiliser au mieux tout ce qui a été vu au cours.
 
 ### Copies d'écran
 
-- [Lancement du programme](docs/START.md)
-- [Customer](docs/0_CUSTOMER.md)
-  - [Customer ADD](docs/0_0_CUSTOMER_ADD.md)
-  - [Customer LIST](docs/0_1_CUSTOMER_LIST.md)
-- [Product](docs/1_PRODUCT.md)
-  - [Product ADD](docs/1_0_PRODUCT_ADD.md)
-  - [Product LIST](docs/1_1_PRODUCT_LIST.md)
-- [Transaction](docs/2_TRANSACTION.md)
-  - [Transaction ADD](docs/2_0_TRANSACTION_ADD.md)
-  - [Transaction LIST](docs/2_1_TRANSACTION_LIST.md)
-- [Quit](docs/3_QUIT.md)
+<details>
+<summary>Lancement du programme</summary>
+
+~~~
+Welcome message ...
+-------------------
+Load database files
+shop files : ../shop_xyz.csv
+
+Main menu
+   0 Customer
+   1 Product
+   2 Transaction
+   3 Quit
+your choice [0-4] : 
+~~~
+
+</details>
+
+<details>
+<summary>Customer</summary>
+
+~~~
+Main menu
+   0 Customer
+   1 Product
+   2 Transaction
+   3 Quit
+your choice [0-4] : 0
+
+Customer
+   0 Add
+   1 List
+   2 Exit
+Your choice [0-3] : 2
+~~~
+
+</details>
+
+<details>
+<summary>==> Customer ADD</summary>
+
+~~~
+Customer
+   0 Add
+   1 List
+   2 Exit
+Your choice [0-3] : 0
+
+new customer
+name     : nouveau
+birthday : 30-02-2024
+birthday : 28-02-2024
+email    : email(at)mail.com
+~~~
+
+</details>
+
+<details>
+<summary>==> Customer LIST</summary>
+
+~~~
+Customer
+   0 Add
+   1 List
+   2 Exit
+Your choice [0-3] : 1
+
+id       : 0
+name     : Megan Robinson
+birthday : 18-JUN-1995
+email    : megan.robinson@example.com
+
+id       : 1
+name     : John Smith
+birthday : 21-MAI-1990
+email    : john.smith@example.com
+
+etc ... 
+~~~
+
+</details>
+
+<details>
+<summary>Product</summary>
+
+~~~
+Main menu
+   0 Customer
+   1 Product
+   2 Transaction
+   3 Quit
+your choice [0-4] : 1
+
+Product
+   0 Add
+   1 List
+   2 Exit
+Your choice [0-3] : 2
+~~~
+
+</details>
+
+<details>
+<summary>==> Product ADD</summary>
+
+~~~
+Product
+   0 Add
+   1 List
+   2 Exit
+Your choice [0-3] : 0
+
+new product
+name     : name
+details  : details
+prices   : 12.20
+~~~
+
+</details>
+
+<details>
+<summary>==> Product LIST</summary>
+
+~~~
+Product
+   0 Add
+   1 List
+   2 Exit
+Your choice [0-3] : 1
+
+id       : 0
+name     : Sous Vide Machine
+details  : Precision sous vide machine
+price    : 99.99
+
+id       : 1
+name     : Widget Pro
+details  : High-quality widget with advanced features
+price    : 29.99
+
+etc ...
+~~~
+
+</details>
+
+<details>
+<summary>Transcation</summary>
+
+~~~
+Main menu
+   0 Customer
+   1 Product
+   2 Transaction
+   3 Quit
+your choice [0-4] : 2
+
+Transaction
+   0 Add
+   1 List
+   2 Exit
+Your choice [0-3] : 2
+~~~
+
+</details>
+
+<details>
+<summary>==> Transaction ADD</summary>
+
+~~~
+Transaction
+   0 Add
+   1 List
+   2 Exit
+Your choice [0-3] : 0
+
+new transaction
+cust id [1-21] : 1
+prod id [1-51] : 2
+date : 12-12-2024
+~~~
+
+</details>
+
+<details>
+<summary>==> Transaction LIST</summary>
+
+~~~
+Transaction
+   0 Add
+   1 List
+   2 Exit
+Your choice [0-3] : 1
+
+customer : Amy Wilson
+product  : Stylus Pen
+price    : 9.49
+date     : 02-JAN-2024
+
+customer : Laura Taylor
+product  : Portable Speaker
+price    : 44.99
+date     : 04-JAN-2024
+
+etc ...
+~~~
+
+</details>
+
+<details>
+<summary>QUIT</summary>
+
+~~~
+Main menu
+   0 Customer
+   1 Product
+   2 Transaction
+   3 Quit
+your choice [0-4] : 3
+
+Quit
+save databases [Y/N] : n
+Quit the application [Y/N] : y
+~~~
+
+</details>
 
 ### Modalités
 - à faire **par groupe de deux étudiants**
