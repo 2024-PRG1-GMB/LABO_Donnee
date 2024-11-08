@@ -339,7 +339,7 @@ etc ...
 </details>
 
 <details>
-<summary>Transcation</summary>
+<summary>Transaction</summary>
 
 ~~~
 Main menu
