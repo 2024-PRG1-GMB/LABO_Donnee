@@ -198,7 +198,7 @@ Un seul fichier `.csv` (comma separated value) contient toutes les données des 
 ~~~
 Welcome message ...
 -------------------
-Load database files
+Load database file
 shop files : ../shop_xyz.csv
 
 Main menu
