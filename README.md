@@ -6,11 +6,11 @@
 
 ### A faire
 Le jeu de la vie, inventé par J. H. Conway, utilise une grille rectangulaire de cellules, chacune d’entre elles pouvant contenir 0 ou 1 habitant.
-Chaque cellule a jusqu’à huit et nous utiliserons *occ(k)* pour désigner le nombre de cellules voisines de la cellule k qui sont occupées.
+Chaque cellule a jusqu’à huit et nous utiliserons `occ(k)` pour désigner le nombre de cellules voisines de la cellule `k` qui sont occupées.
 
 L’état d’une nouvelle génération est obtenu à partir de la précédente en appliquant deux règles simples :
 
-- Un habitant situé dans la cellule k survit à la génération suivante si `occ(k) = 2` ou `occ(k) = 3`, et meurt dans le cas contraire
+- Un habitant situé dans la cellule `k` survit à la génération suivante si `occ(k) = 2` ou `occ(k) = 3`, et meurt dans le cas contraire
 - Il y aura une “naissance” dans une cellule k vide si `occ(k) = 3`, sinon la cellule restera vide.
 
 Ecrire un programme en C++ qui, partant d’une configuration initiale donnée (cf. Indications), calcule un certain nombre de générations suivantes en application des règles ci-dessus et affiche chacune des configurations trouvées.
