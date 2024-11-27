@@ -12,13 +12,3 @@
 | 8      | dos Santos Samuel      | Sese Hénok                |
 | 9      | Ghaemmaghami Théo      | Marchand Ethan            |
 | 10     | Miehlbradt Garis       | Ischi Marc                |
-
-
-
-
-
-
-
-
-
-
