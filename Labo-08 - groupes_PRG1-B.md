@@ -11,13 +11,3 @@
 | 7      | Monsur Sadman             | Pereira Gabriel           |
 | 8      | Kiala Binga Christnovie   | Sugrañes Santiago         |
 | **4**  | *Suboonsan Chris*         | Weyermann Maxence         |
-
-Derleth Martin          
-Rista Grégoire          
-Saber Jonathan          
-Mohi Uddin Samin        
-Giordani Victor         
-Correia Da Silva Maikol 
-Pereira Gabriel
-Sugrañes Santiago       
-Weyermann Maxence       
