@@ -1,4 +1,4 @@
-## Groupes PRG1-E
+## Groupes PRG1-E (Labo-07)
 
 | Groupe | Etudiant 1                | Etudiant 2                |
 |:------:|---------------------------|---------------------------|

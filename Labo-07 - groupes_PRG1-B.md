@@ -1,4 +1,4 @@
-## Groupes PRG1-B
+## Groupes PRG1-B (Labo-07)
 
 | Groupe | Etudiant 1                | Etudiant 2                |
 |:------:|---------------------------|---------------------------|
