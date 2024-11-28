@@ -8,7 +8,7 @@
 | 4      | Billault Martin        | Kilcher Théo              |
 | 5      | Bonny Aymeric          | Feuzet Kitio Russelle     |
 | 6      | Sadiku Enis.           | Sadiku Enis               |
-| 7      | Cornu Laurent          | Léger Fabien              |
-| 8      | dos Santos Samuel      | Sese Hénok                |
-| 9      | Ghaemmaghami Théo      | Marchand Ethan            |
-| 10     | Miehlbradt Garis       | Ischi Marc                |
+| 7      | dos Santos Samuel      | Léger Fabien              |
+| 8      | Cornu Laurent          | Sese Hénok                |
+| 9      | Ghaemmaghami Théo      | Ischi Marc                |
+| 10     | Miehlbradt Garis       | Marchand Ethan            |
