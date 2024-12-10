@@ -124,7 +124,6 @@ f8xf1#   // La tour noire capture la tour blanche en f1 et donne échec et mat (
 | Échec et mat       | `f6-f8#`                 | Echec et mat au roi.                | `#` indique un mat.                 |
 | Promotion          | `c7xb8=Q`                | Un pion est promu en dame.          | `=` pour une promotion.             |
 | Double échec       | `b6-f6++`                | Double échec.                       | `++` pour signaler un double échec. |
-| Capture en passant | `exd6 e.p.`              | Capture en passant d’un pion.       | `e.p.` pour capture en passant.     |
 | Commentaire        | `f6-f8# // echec et mat` | Commmentaire.                       | Commentaire dans le fichier         |
 
 #### Tableau des promotions
