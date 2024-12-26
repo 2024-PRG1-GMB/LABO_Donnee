@@ -1,473 +1,744 @@
-## Jeu d'échec
+## Container <T, n> avec iterateurs
 
 ### Objectif
-- Présentation du code aussi propre que possible
-- Architecture informatique
-    - Structure de données
-    - Class
-    - Sous-programmes
-    - Librairie(s)
+
+- Classe générique
+- Itérateur
 
 ### A faire
-Nous disposons de fichiers correspondants à desparties d'échec intéressantes que nous souhaitons interpréter et transcrire sur une représentation graphique à l'écran.
 
-Pour simplifier, les fichiers sont au format SAN (Standard Algebraic Notation) simplifié.
+Nous souhaitons mettre à disposition une structure de stockage limitant les déplacements en mémoire.
+
+Cette classe générique `Container<T, n>` est instanciée par deux paramètres génériques
+
+- `T` le type de donnée à stocker.
+- `n` la capacité déterminée à la compilation.
+
+Cette structure peut être représentée comme suit
+
+| 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+|---|---|---|---|---|---|---|---|---|---|
+| e | ? | ? | ? | ? | ? | a | b | c | d |
+|   |   |   |   |   |   | F |   |   |   |
+|   | L |   |   |   |   |   |   |   |   |
+
+- Les éléments sont stockés de **manière circulaire**, ainsi des méthodes comme<br>
+  `push_front(..)` ou `pop_front()` ne nécessitent aucun déplacement de valeurs.
+- `F` : `First` indice de la première valeur déterminée.
+- `L` : `Last` indice de la première valeur indéterminée.
+- `a`, `b`, `c`, `d` et `e` les valeurs actuellement stockées.
+- `?` les valeurs indéterminées dans la structure.
+
+<br>
+
+La classe `Container<T, n>` doit implémenter à minima les propriétés et méthodes ci-après
+
+| Méthode                  | Description                                              | Note | 
+|--------------------------|----------------------------------------------------------|:----:|
+| `Container()`            | constructeur sans paramètre                              |      |
+| `Container(first, last)` | constructeur sur la base des itérateurs `first`et `last` | (1)  |
+| `Container(container)`   | constructeur par copie                                   |      |
+| `operator =`             | opérateur d'affectation                                  | (2)  |
+| `operator <`             | comparaison lexicographique `lhs <  rhs`                 | (2)  |
+| `operator >`             | comparaison lexicographique `lhs >  rhs`                 | (2)  |
+| `operator <=`            | comparaison lexicographique `lhs <= rhs`                 | (2)  |
+| `operator >=`            | comparaison lexicographique `lhs >= rhs`                 | (2)  |
+| `operator ==`            | comparaison lexicographique `lhs == rhs`                 | (2)  |
+| `operator !=`            | comparaison lexicographique `lhs != rhs`                 | (2)  |
+| `front()`                | retourne la valeur en tête        (à `First`)            |      |
+| `back()`                 | retourne la valeur en queue       (avant `Last`)         |      |
+| `push_front(val)`        | ajout d'une valeur `val` en tête  (avant `First`)        |      |
+| `push_back(val)`         | ajout d'une valeur `val` en queue (à `Last`)             |      |
+| `pop_front()`            | suppression de la valeur en tête  (à `First`)            |      |
+| `pop_back()`             | suppression de la valeur en queue (avant `Last`)         |      |
+| `at(pos)`                | accès à une valeur en position logique `pos`             | (3)  |
+| `size()`                 | retourne le nombre de valeurs stockées                   |      |
+| `full()`                 | retourne `true` si plein, sinon `false`                  |      |
+| `empty()`                | retourne `true` si vide, sinon `false`                   |      |
+| `begin()`                | itérateur sur la première valeur    (accès RW)           | (4)  |
+| `end()`                  | itérateur après la dernière valeur  (accès RW)           | (4)  |
+| `cbegin()`               | itérateur sur la première valeur    (accès RO)           | (4)  |
+| `cend()`                 | itérateur après la dernière valeur  (accès RO)           | (4)  |
 
-#### Exemples de fichier
-
-<details>
-<summary>game1.txt</summary>
-
-Game: Paul Morphy vs. Duke Karl/Count Isouard (1858)
-
-~~~
-e2-e4   // Opening move, controlling the center
-e7-e5   // Responding in kind, controlling the center
-g1-f3   // Developing the knight, attacking the e5 pawn
-d7-d6   // Supporting the pawn on e5
-d2-d4   // Opening up the center, attacking the e5 pawn
-f8-g4   // Pinning the knight on f3 to the queen
-d4xe5   // Capturing the pawn on e5
-g4xf3   // Capturing the knight, forcing a queen move
-d1xf3   // Queen recaptures, staying active
-f8-c4   // Developing the bishop to an aggressive square
-b8-c3   // Developing the knight and adding pressure to d5
-d7-c6   // Preparing to develop more pieces
-f1-b5   // Attacking the pinned c6 pawn
-a7-b5   // Sacrificing material to deflect the bishop
-b5xb5   // Capturing the pawn, still attacking
-c8-d7   // Developing the knight to defend
-e1-c1   // Castling queenside, connecting the rooks
-d7-d7   // Preparing for the final attack
-d1-d7   // Capturing the pinned knight on d7
-e8-d7   // Recapturing with the queen
-f3-b8   // Check, forcing a defensive move
-d7xb8   // Sacrificing the queen to deflect the defender
-d7-d8#  // Checkmate using the rook
-~~~
-
-</details>
-
-<details>
-<summary>game2.txt</summary>
-
-Real Game Example: Anderssen vs. Kieseritzky, 1851 (Immortal Game)
-
-~~~
-e2-e4 // White opens with a strong central pawn move.
-e7-e5 // Black mirrors, controlling the center.
-f2-f4 // White plays the King’s Gambit.
-e5xf4 // Black accepts the gambit, gaining a pawn.
-g1-f3 // White develops a knight to attack the pawn on f4.
-d7-d6 // Black defends the f4 pawn.
-d2-d4 // White strikes in the center.
-g5-g4 // Black attacks the knight with a pawn.
-f3-e5 // White sacrifices the knight for a strong attack.
-d6xe5 // Black captures the knight.
-d4xe5 // White recaptures, dominating the center.
-d8-h4+ // Black checks with the queen.
-e1-e2 // White blocks the check.
-h4-e4+ // Black continues with a check.
-f1-e2 // White blocks again, developing the bishop.
-e4-e3 // Black plays aggressively with the queen.
-h2-h3 // White attacks the pawn.
-e3xf2+ // Black delivers another check with the queen.
-e2-f2 // White captures the queen, consolidating.
-c8-e6 // Black develops the bishop.
-b1-c3 // White develops a knight.
-b8-c6 // Black develops a knight.
-c1-f4 // White brings out the bishop.
-c6-d4 // Black centralizes the knight.
-c3-d5 // White brings out another knight, threatening fork tactics.
-d8-h4+ // Black checks the king.
-g2-g3 // White defends with the pawn.
-h4-g3 // Black sacrifices the queen for a pawn.
-f2-g3 // White accepts the queen sacrifice.
-f8-b4 // Black pins the knight with the bishop.
-a2-a3 // White attacks the pinned bishop.
-b4-c3 // Black sacrifices the bishop.
-b2-c3 // White captures the bishop.
-d4-c2+ // Black forks the king and rook with the knight.
-e1-d1 // White moves the king to safety.
-c2-a1 // Black captures the rook.
-h1-h2 // White prepares to defend.
-a1-b3 // Black places the knight aggressively.
-c3-c7 // White threatens promotion.
-b3-d2 // Black places the knight to defend.
-c7-c8=Q // White promotes the pawn to a queen, gaining material.
-~~~
-
-</details>
-
-#### Syntaxe des coups
-
-| **Concept**        | **Exemple**              | **Signification**                   | **Technique**                       |
-|--------------------|--------------------------|-------------------------------------|-------------------------------------|
-| Mouvement de base  | `e2-e4`                  | Déplacement d’un pion ou pièce.     | Simple avancée d’une pièce.         |
-| Capture            | `d5xe4`                  | La pièce capture une autre en `e4`. | `x` indique une capture.            |
-| Échec              | `d8-d1+`                 | Echec au roi.                       | `+` indique un échec.               |
-| Échec et mat       | `f6-f8#`                 | Echec et mat au roi.                | `#` indique un mat.                 |
-| Promotion          | `c7xb8=Q`                | Un pion est promu en dame.          | `=` pour une promotion.             |
-| Double échec       | `b6-f6++`                | Double échec.                       | `++` pour signaler un double échec. |
-| Commentaire        | `f6-f8# // echec et mat` | Commmentaire.                       | Commentaire dans le fichier         |
-
-#### Tableau des promotions
-
-| **Pièce**  | **Symbole** | **Exemple de notation**           |
-|------------|:-----------:|-----------------------------------|
-| Dame       | Q           | `e8=Q` (promotion en dame)        |
-| Tour       | R           | `e8=R` (promotion en tour)        |
-| Cavalier   | N           | `e8=N` (promotion en cavalier)    |
-| Fou        | B           | `e8=B` (promotion en fou)         |
-
-
-#### Pièces d'échecs en UTF-8
-
-| **Pièce**            | **Symbole** | **Code UTF-8**  | **Nom Unicode**            |
-|----------------------|:-----------:|:---------------:|----------------------------|
-| **Roi blanc**        | ♔           | U+2654          | WHITE CHESS KING           |
-| **Reine blanche**    | ♕           | U+2655          | WHITE CHESS QUEEN          |
-| **Tour blanche**     | ♖           | U+2656          | WHITE CHESS ROOK           |
-| **Fou blanc**        | ♗           | U+2657          | WHITE CHESS BISHOP         |
-| **Cavalier blanc**   | ♘           | U+2658          | WHITE CHESS KNIGHT         |
-| **Pion blanc**       | ♙           | U+2659          | WHITE CHESS PAWN           |
-| **Roi noir**         | ♚           | U+265A          | BLACK CHESS KING           |
-| **Reine noire**      | ♛           | U+265B          | BLACK CHESS QUEEN          |
-| **Tour noire**       | ♜           | U+265C          | BLACK CHESS ROOK           |
-| **Fou noir**         | ♝           | U+265D          | BLACK CHESS BISHOP         |
-| **Cavalier noir**    | ♞           | U+265E          | BLACK CHESS KNIGHT         |
-| **Pion noir**        | ♟           | U+265F          | BLACK CHESS PAWN           |
-
-
-Sur cette base, écrire le programme permettant d'interpreter les fichiers proposés.
-
-<details>
-<summary>Déroulé d'une partie</summary>
-
-~~~
-Ce programme ...
-
-  A B C D E F G H
-8 ♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜
-7 ♟ ♟ ♟ ♟ ♟ ♟ ♟ ♟
-6 . . . . . . . .
-5 . . . . . . . .
-4 . . . . . . . .
-3 . . . . . . . .
-2 ♙ ♙ ♙ ♙ ♙ ♙ ♙ ♙
-1 ♖ ♘ ♗ ♕ ♔ ♗ ♘ ♖
-
-  A B C D E F G H
-8 ♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜
-7 ♟ ♟ ♟ ♟ ♟ ♟ ♟ ♟
-6 . . . . . . . .
-5 . . . . . . . .
-4 . . . . ♙ . . .
-3 . . . . . . . .
-2 ♙ ♙ ♙ ♙ . ♙ ♙ ♙
-1 ♖ ♘ ♗ ♕ ♔ ♗ ♘ ♖
-
-Opening move, controlling the center
-
-
-  A B C D E F G H
-8 ♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜
-7 ♟ ♟ ♟ ♟ . ♟ ♟ ♟
-6 . . . . . . . .
-5 . . . . ♟ . . .
-4 . . . . ♙ . . .
-3 . . . . . . . .
-2 ♙ ♙ ♙ ♙ . ♙ ♙ ♙
-1 ♖ ♘ ♗ ♕ ♔ ♗ ♘ ♖
-
-Responding in kind, controlling the center
-
-
-  A B C D E F G H
-8 ♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜
-7 ♟ ♟ ♟ ♟ . ♟ ♟ ♟
-6 . . . . . . . .
-5 . . . . ♟ . . .
-4 . . . . ♙ . . .
-3 . . . . . ♘ . .
-2 ♙ ♙ ♙ ♙ . ♙ ♙ ♙
-1 ♖ ♘ ♗ ♕ ♔ ♗ . ♖
-
-Developing the knight, attacking the e5 pawn
-
-
-  A B C D E F G H
-8 ♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜
-7 ♟ ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♟ . . .
-4 . . . . ♙ . . .
-3 . . . . . ♘ . .
-2 ♙ ♙ ♙ ♙ . ♙ ♙ ♙
-1 ♖ ♘ ♗ ♕ ♔ ♗ . ♖
-
-Supporting the pawn on e5
-
-
-  A B C D E F G H
-8 ♜ ♞ ♝ ♛ ♚ ♝ ♞ ♜
-7 ♟ ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♟ . . .
-4 . . . ♙ ♙ . . .
-3 . . . . . ♘ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♗ ♕ ♔ ♗ . ♖
-
-Opening up the center, attacking the e5 pawn
-
-
-  A B C D E F G H
-8 ♜ ♞ ♝ ♛ ♚ . ♞ ♜
-7 ♟ ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♟ . . .
-4 . . . ♙ ♙ . ♝ .
-3 . . . . . ♘ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♗ ♕ ♔ ♗ . ♖
-
-Pinning the knight on f3 to the queen
-
-
-  A B C D E F G H
-8 ♜ ♞ ♝ ♛ ♚ . ♞ ♜
-7 ♟ ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♙ . . .
-4 . . . . ♙ . ♝ .
-3 . . . . . ♘ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♗ ♕ ♔ ♗ . ♖
-
-Capturing the pawn on e5
-
-
-  A B C D E F G H
-8 ♜ ♞ ♝ ♛ ♚ . ♞ ♜
-7 ♟ ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . . . . ♝ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♗ ♕ ♔ ♗ . ♖
-
-Capturing the knight, forcing a queen move
-
-
-  A B C D E F G H
-8 ♜ ♞ ♝ ♛ ♚ . ♞ ♜
-7 ♟ ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . . . . ♕ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♗ . ♔ ♗ . ♖
-
-Queen recaptures, staying active
-
-
-  A B C D E F G H
-8 ♜ ♞ ♝ ♛ ♚ . ♞ ♜
-7 ♟ ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . . . . ♕ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♗ . ♔ ♗ . ♖
-
-Developing the bishop to an aggressive square
-
-
-  A B C D E F G H
-8 ♜ . ♝ ♛ ♚ . ♞ ♜
-7 ♟ ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . ♞ . . ♕ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♗ . ♔ ♗ . ♖
-
-Developing the knight and adding pressure to d5
-
-
-  A B C D E F G H
-8 ♜ . ♝ ♛ ♚ . ♞ ♜
-7 ♟ ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . ♞ . . ♕ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♗ . ♔ ♗ . ♖
-
-Preparing to develop more pieces
-
-
-  A B C D E F G H
-8 ♜ . ♝ ♛ ♚ . ♞ ♜
-7 ♟ ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . ♗ . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . ♞ . . ♕ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♗ . ♔ . . ♖
-
-Attacking the pinned c6 pawn
-
-
-  A B C D E F G H
-8 ♜ . ♝ ♛ ♚ . ♞ ♜
-7 . ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . ♟ . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . ♞ . . ♕ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♗ . ♔ . . ♖
-
-Sacrificing material to deflect the bishop
-
-
-  A B C D E F G H
-8 ♜ . ♝ ♛ ♚ . ♞ ♜
-7 . ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . ♞ . . ♕ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♗ . ♔ . . ♖
-
-Capturing the pawn, still attacking
-
-
-  A B C D E F G H
-8 ♜ . . ♛ ♚ . ♞ ♜
-7 . ♟ ♟ ♝ . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . ♞ . . ♕ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♗ . ♔ . . ♖
-
-Developing the knight to defend
-
-
-  A B C D E F G H
-8 ♜ . . ♛ ♚ . ♞ ♜
-7 . ♟ ♟ ♝ . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . ♞ . . ♕ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♔ . . . . ♖
-
-Castling queenside, connecting the rooks
-
-
-  A B C D E F G H
-8 ♜ . . ♛ ♚ . ♞ ♜
-7 . ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . ♞ . . ♕ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♔ . . . . ♖
-
-Preparing for the final attack
-
-
-  A B C D E F G H
-8 ♜ . . ♛ ♚ . ♞ ♜
-7 . ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . ♞ . . ♕ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♔ . . . . ♖
-
-Capturing the pinned knight on d7
-
-
-  A B C D E F G H
-8 ♜ . . ♛ . . ♞ ♜
-7 . ♟ ♟ ♚ . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . ♞ . . ♕ . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♔ . . . . ♖
-
-Recapturing with the queen
-
-
-  A B C D E F G H
-8 ♜ ♕ . ♛ . . ♞ ♜
-7 . ♟ ♟ ♚ . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . ♞ . . . . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♔ . . . . ♖
-
-Check, forcing a defensive move
-
-
-  A B C D E F G H
-8 ♜ ♚ . ♛ . . ♞ ♜
-7 . ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . ♞ . . . . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♔ . . . . ♖
-
-Sacrificing the queen to deflect the defender
-
-
-  A B C D E F G H
-8 ♜ ♚ . . . . ♞ ♜
-7 . ♟ ♟ . . ♟ ♟ ♟
-6 . . . ♟ . . . .
-5 . . . . ♙ . . .
-4 . . . . ♙ . . .
-3 . . ♞ . . . . .
-2 ♙ ♙ ♙ . . ♙ ♙ ♙
-1 ♖ ♘ ♔ . . . . ♖
-
-Checkmate using the rook
-~~~
-
-</details>
 
 ### Complément
 
-- Utiliser au mieux ce qui a été vu au cours, y compris la généricité
-- Les lignes du fichier peuvent contenir des erreurs dans le format voire dans les coordonnées, rejeter toutes les lignes ne respectant pas le format prévu.
-- Les mouvements sont supposés ccorrects, il n'est donc pas nécessaire de vérifier les mouvements.
-- La représentation doit correspondre aux copies d'écran proposées.
-- Si vous souhaitez ralentir le déroulement du programme [sleep_for](https://cplusplus.com/reference/thread/this_thread/sleep_for/)
+- **Conseil** : Implémenter rapidement les itérateurs qui seront utiles pour les méthodes de cette classe.
+- **Conseil** : Valider vos résultats au fur et à mesure du développement.
+- La collection de valeurs dans la classe `Container<T, n>` est implémentée par un `array<T, n>`.
+- **(1)** Les itérateurs peuvent être sur d'autres structures (`vector`, `list`, ...)<br>
+  mais nécessairement du même type de donnée `<T>` que la classe `Container<T, n>`.
+- **(2)** Les tailles et capacités peuvent différer entre les deux objets traités.
+- **(3)** La position `pos` correspond à la position logique dans la structure et non à l'indice dans le tableau.
+- **(4)** Selon l'ordre logique dans la structure et non strictement séquentiellement dans le tableau.
+
+<br>
+
+Le programme principal `main` fourni doit produire le résultat ci-après.
+
+<details>
+<summary>main</summary>
+
+~~~cpp
+#include <iostream>
+#include <cstdlib>
+#include <vector>
+#include <exception>
+
+#include "Container_G.hpp"
+
+using namespace std;
+
+int main() {
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::Container()"          << endl;
+   cout << "-------------------------------------" << endl;
+   Container<int, 10> c1;
+
+   c1.show_details();
+   c1.show_content();
+   cout << c1 << endl;
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::Container(it1, it2)"  << endl;
+   cout << "-------------------------------------" << endl;
+   vector v {1, 2, 3};
+   Container<int, 5>c2 (v.cbegin(), v.cend());
+
+   c2.show_details();
+   c2.show_content();
+   cout << c2 << endl;
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::container(other)"     << endl;
+   cout << "-------------------------------------" << endl;
+   c2.show_details();
+   Container<int, 10> c3(c2);
+
+   c3.show_content();
+   cout << c3 << endl;
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::back()"               << endl;
+   cout << "-------------------------------------" << endl;
+   c3.show_content();
+   c3.back() = 8;
+   c3.show_content();
+   c3.back() = 3;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::front()"              << endl;
+   cout << "-------------------------------------" << endl;
+   c3.show_content();
+   c3.front() = 8;
+   c3.show_content();
+   c3.front() = 3;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::push_back()"          << endl;
+   cout << "-------------------------------------" << endl;
+   Container<char, 4> c4;
+   c4.show_content();
+   c4.push_back('a');
+   c4.push_back('b');
+   c4.push_back('c');
+
+   c4.show_content();
+   cout << c4 << endl;
+   cout << endl;
+
+   try {
+      c4.push_back('d');
+      c4.push_back('e');
+      cout << endl;
+   }
+   catch (std::logic_error e) {
+      cout << "EXCEPTION " << e.what() << endl;
+   }
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::push_front()"         << endl;
+   cout << "-------------------------------------" << endl;
+   Container<char, 8> c5(c4);
+   try {
+      c5.push_front('A');
+      c5.push_front('B');
+      c5.push_front('C');
+
+      c5.show_content();
+      cout << c5 << endl;
+      cout << endl;
+
+      c5.push_back('D');
+      c5.push_back('E');
+      cout << endl;
+   }
+   catch (std::logic_error e) {
+      cout << "EXCEPTION " << e.what() << endl;
+   }
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::pop_back()"           << endl;
+   cout << "-------------------------------------" << endl;
+   Container c6(c4);
+   try {
+      c6.pop_back();
+      c6.pop_back();
+
+      c6.show_content();
+      cout << c6 << endl;
+      cout << endl;
+
+      c6.pop_back();
+      c6.pop_back();
+      c6.pop_back();
+      cout << endl;
+   }
+   catch (std::logic_error e) {
+      cout << "EXCEPTION " << e.what() << endl;
+   }
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::pop_front()"          << endl;
+   cout << "-------------------------------------" << endl;
+   Container c7(c4);
+   try {
+      c7.pop_front();
+      c7.pop_front();
+
+      c7.show_content();
+      cout << c7 << endl;
+      cout << endl;
+
+      c7.pop_front();
+      c7.pop_front();
+      c7.pop_front();
+      cout << endl;
+   }
+   catch (std::logic_error e) {
+      cout << "EXCEPTION " << e.what() << endl;
+   }
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::at(..)"               << endl;
+   cout << "-------------------------------------" << endl;
+   Container c8(c4);
+
+   try {
+      c8.pop_back();
+      c8.pop_back();
+      c8.show_content();
+
+      cout << "c8.at(1) : " << c8.at(1) << endl;
+      cout << "c8.at(1) = 'G';" << endl;
+      c8.at(1) = 'G';
+      cout << endl;
+
+      c8.show_content();
+      cout << c8 << endl;
+
+      cout << "c8.at(2)  : " << c8.at(2);
+   }
+   catch (std::logic_error e) {
+      cout << "EXCEPTION " << e.what() << endl;
+   }
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::iterator"             << endl;
+   cout << "-------------------------------------" << endl;
+   c3.show_content();
+   cout << c3 << endl;
+   cout << endl;
+   cout << "*c3.begin() : " << *c3.begin() << endl;
+   cout << endl;
+   for (auto it=c3.begin(); it!=c3.end(); ++it)
+      cout << *it << " ";
+   cout << endl;
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::operator << (..)"     << endl;
+   cout << "-------------------------------------" << endl;
+   c3.show_content();
+   cout << c3 << endl;
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::operator == (..)"     << endl;
+   cout << "-------------------------------------" << endl;
+   Container<int, 5> c_123;
+   c_123.push_back(1).push_back(1).push_back(2).push_back(3).pop_front();
+
+   Container<int, 5> c123;
+   c123.push_back(1).push_back(2).push_back(3);
+
+   Container<int, 5> c12;
+   c12.push_back(1).push_back(2);
+
+   Container<int, 5> c113;
+   c113.push_back(1).push_back(1).push_back(3);
+
+   cout << c_123 <<    " == " << c123 << "  "    << boolalpha << (c_123 == c123) << endl;
+   cout << c123  <<    " == " << c12  << "     " << boolalpha << (c123  == c12 ) << endl;
+   cout << c12   << "    == " << c123 << "  "    << boolalpha << (c12   == c123) << endl;
+   cout << c123  <<    " == " << c113 << "  "    << boolalpha << (c123  == c113) << endl;
+   cout << c113  <<    " == " << c123 << "  "    << boolalpha << (c113  == c123) << endl;
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::operator < (..)"      << endl;
+   cout << "-------------------------------------" << endl;
+   cout << c_123 <<    " <  " << c123 << "  "    << boolalpha << (c_123 <  c123) << endl;
+   cout << c123  <<    " <  " << c12  << "     " << boolalpha << (c123  <  c12 ) << endl;
+   cout << c12   << "    <  " << c123 << "  "    << boolalpha << (c12   <  c123) << endl;
+   cout << c123  <<    " <  " << c113 << "  "    << boolalpha << (c123  <  c113) << endl;
+   cout << c113  <<    " <  " << c123 << "  "    << boolalpha << (c113  <  c123) << endl;
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::operator > (..)"      << endl;
+   cout << "-------------------------------------" << endl;
+   cout << c_123 <<    " >  " << c123 << "  "    << boolalpha << (c_123 >  c123) << endl;
+   cout << c123  <<    " >  " << c12  << "     " << boolalpha << (c123  >  c12 ) << endl;
+   cout << c12   << "    >  " << c123 << "  "    << boolalpha << (c12   >  c123) << endl;
+   cout << c123  <<    " >  " << c113 << "  "    << boolalpha << (c123  >  c113) << endl;
+   cout << c113  <<    " >  " << c123 << "  "    << boolalpha << (c113  >  c123) << endl;
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::operator <= (..)"     << endl;
+   cout << "-------------------------------------" << endl;
+   cout << c_123 <<    " <= " << c123 << "  "    << boolalpha << (c_123 <=  c123) << endl;
+   cout << c123  <<    " <= " << c12  << "     " << boolalpha << (c123  <=  c12 ) << endl;
+   cout << c12   << "    <= " << c123 << "  "    << boolalpha << (c12   <=  c123) << endl;
+   cout << c123  <<    " <= " << c113 << "  "    << boolalpha << (c123  <=  c113) << endl;
+   cout << c113  <<    " <= " << c123 << "  "    << boolalpha << (c113  <=  c123) << endl;
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::operator >= (..)"     << endl;
+   cout << "-------------------------------------" << endl;
+   cout << c_123 <<    " >= " << c123 << "  "    << boolalpha << (c_123 >=  c123) << endl;
+   cout << c123  <<    " >= " << c12  << "     " << boolalpha << (c123  >=  c12 ) << endl;
+   cout << c12   << "    >= " << c123 << "  "    << boolalpha << (c12   >=  c123) << endl;
+   cout << c123  <<    " >= " << c113 << "  "    << boolalpha << (c123  >=  c113) << endl;
+   cout << c113  <<    " >= " << c123 << "  "    << boolalpha << (c113  >=  c123) << endl;
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::full()"               << endl;
+   cout << "-------------------------------------" << endl;
+   Container<int, 3> c13;
+   int val=0;
+   while (not c13.full())
+      c13.push_back(++val);
+
+   c13.show_details();
+   c13.show_content();
+   cout << c13 << endl;
+   cout << endl;
+
+   cout << "-------------------------------------" << endl;
+   cout << "Container<T, n>::empty()"              << endl;
+   cout << "-------------------------------------" << endl;
+   while (not c13.empty()) {
+      c13.pop_front();
+   }
+
+   c13.show_details();
+   c13.show_content();
+   cout << c13 << endl;
+   cout << endl;
+
+   return EXIT_SUCCESS;
+}
+~~~
+
+</details>
+
+<details>
+<summary>output</summary>
+
+~~~
+-------------------------------------
+Container<T, n>::Container()
+-------------------------------------
+size      : 0
+capacity  : 10
+first     : 0
+last      : 0
+
+ 0 1 2 3 4 5 6 7 8 9
+ ? ? ? ? ? ? ? ? ? ?
+ ^ First
+ ^ Last
+
+[]
+
+-------------------------------------
+Container<T, n>::Container(it1, it2)
+-------------------------------------
+size      : 3
+capacity  : 5
+first     : 0
+last      : 3
+
+ 0 1 2 3 4
+ 1 2 3 ? ?
+ ^ First
+       ^ Last
+
+[1, 2, 3]
+
+-------------------------------------
+Container<T, n>::container(other)
+-------------------------------------
+size      : 3
+capacity  : 5
+first     : 0
+last      : 3
+
+ 0 1 2 3 4 5 6 7 8 9
+ 1 2 3 ? ? ? ? ? ? ?
+ ^ First
+       ^ Last
+
+[1, 2, 3]
+
+-------------------------------------
+Container<T, n>::back()
+-------------------------------------
+ 0 1 2 3 4 5 6 7 8 9
+ 1 2 3 ? ? ? ? ? ? ?
+ ^ First
+       ^ Last
+
+ 0 1 2 3 4 5 6 7 8 9
+ 1 2 8 ? ? ? ? ? ? ?
+ ^ First
+       ^ Last
+
+-------------------------------------
+Container<T, n>::front()
+-------------------------------------
+ 0 1 2 3 4 5 6 7 8 9
+ 1 2 3 ? ? ? ? ? ? ?
+ ^ First
+       ^ Last
+
+ 0 1 2 3 4 5 6 7 8 9
+ 8 2 3 ? ? ? ? ? ? ?
+ ^ First
+       ^ Last
+
+-------------------------------------
+Container<T, n>::push_back()
+-------------------------------------
+ 0 1 2 3
+ ? ? ? ?
+ ^ First
+ ^ Last
+
+ 0 1 2 3
+ a b c ?
+ ^ First
+       ^ Last
+
+[a, b, c]
+
+EXCEPTION Container<T, n>::push_back
+
+-------------------------------------
+Container<T, n>::push_front()
+-------------------------------------
+ 0 1 2 3 4 5 6 7
+ a b c d ? C B A
+           ^ First
+         ^ Last
+
+[C, B, A, a, b, c, d]
+
+EXCEPTION Container<T, n>::push_back
+
+-------------------------------------
+Container<T, n>::pop_back()
+-------------------------------------
+ 0 1 2 3
+ a b ? ?
+ ^ First
+     ^ Last
+
+[a, b]
+
+EXCEPTION Container<T, n>::pop_front
+
+-------------------------------------
+Container<T, n>::pop_front()
+-------------------------------------
+ 0 1 2 3
+ ? ? c d
+     ^ First
+ ^ Last
+
+[c, d]
+
+EXCEPTION Container<T, n>::pop_front
+
+-------------------------------------
+Container<T, n>::at(..)
+-------------------------------------
+ 0 1 2 3
+ a b ? ?
+ ^ First
+     ^ Last
+
+c8.at(1) : b
+c8.at(1) = 'G';
+
+ 0 1 2 3
+ a G ? ?
+ ^ First
+     ^ Last
+
+[a, G]
+c8.at(2)  : EXCEPTION Container<T, n>::at
+
+-------------------------------------
+Container<T, n>::iterator
+-------------------------------------
+ 0 1 2 3 4 5 6 7 8 9
+ 3 2 3 ? ? ? ? ? ? ?
+ ^ First
+       ^ Last
+
+[3, 2, 3]
+
+*c3.begin() : 3
+
+3 2 3 
+
+-------------------------------------
+Container<T, n>::operator << (..)
+-------------------------------------
+ 0 1 2 3 4 5 6 7 8 9
+ 3 2 3 ? ? ? ? ? ? ?
+ ^ First
+       ^ Last
+
+[3, 2, 3]
+
+-------------------------------------
+Container<T, n>::operator == (..)
+-------------------------------------
+[1, 2, 3] == [1, 2, 3]  true
+[1, 2, 3] == [1, 2]     false
+[1, 2]    == [1, 2, 3]  false
+[1, 2, 3] == [1, 1, 3]  false
+[1, 1, 3] == [1, 2, 3]  false
+
+-------------------------------------
+Container<T, n>::operator < (..)
+-------------------------------------
+[1, 2, 3] <  [1, 2, 3]  false
+[1, 2, 3] <  [1, 2]     false
+[1, 2]    <  [1, 2, 3]  true
+[1, 2, 3] <  [1, 1, 3]  false
+[1, 1, 3] <  [1, 2, 3]  true
+
+-------------------------------------
+Container<T, n>::operator > (..)
+-------------------------------------
+[1, 2, 3] >  [1, 2, 3]  false
+[1, 2, 3] >  [1, 2]     true
+[1, 2]    >  [1, 2, 3]  false
+[1, 2, 3] >  [1, 1, 3]  true
+[1, 1, 3] >  [1, 2, 3]  false
+
+-------------------------------------
+Container<T, n>::operator <= (..)
+-------------------------------------
+[1, 2, 3] <= [1, 2, 3]  true
+[1, 2, 3] <= [1, 2]     false
+[1, 2]    <= [1, 2, 3]  true
+[1, 2, 3] <= [1, 1, 3]  false
+[1, 1, 3] <= [1, 2, 3]  true
+
+-------------------------------------
+Container<T, n>::operator >= (..)
+-------------------------------------
+[1, 2, 3] >= [1, 2, 3]  true
+[1, 2, 3] >= [1, 2]     true
+[1, 2]    >= [1, 2, 3]  false
+[1, 2, 3] >= [1, 1, 3]  true
+[1, 1, 3] >= [1, 2, 3]  false
+
+-------------------------------------
+Container<T, n>::full()
+-------------------------------------
+size      : 3
+capacity  : 3
+first     : 0
+last      : 3
+
+ 0 1 2
+ 1 2 3
+ ^ First
+       ^ Last
+
+[1, 2, 3]
+
+-------------------------------------
+Container<T, n>::empty()
+-------------------------------------
+size      : 0
+capacity  : 3
+first     : 0
+last      : 0
+
+ 0 1 2
+ ? ? ?
+ ^ First
+ ^ Last
+
+[]
+~~~
+
+</details>
+
+<br>
+
+### Exemples d'implémentation des itérateurs et exceptions
+
+<details>
+<summary>itérateurs au sein d'une classe</summary>
+
+~~~cpp
+#include <iostream>
+#include <vector>
+
+class NumberCollection {
+public:
+    NumberCollection(const std::vector<int>& numbers) : numbers(numbers) {}
+
+    class Iterator {
+    public:
+        Iterator(const std::vector<int>& numbers, std::size_t position)
+            : numbers(numbers), position(position) {}
+
+        int operator*() const {
+            return numbers[position];
+        }
+
+        Iterator& operator++() {
+            ++position;
+            return *this;
+        }
+
+        bool operator==(const Iterator& other) const {
+            return position == other.position;
+        }
+
+        bool operator!=(const Iterator& other) const {
+            return position != other.position;
+        }
+
+    private:
+        const std::vector<int>& numbers;
+        std::size_t position;
+    };
+
+    Iterator begin() const {
+        return Iterator(numbers, 0);
+    }
+
+    Iterator end() const {
+        return Iterator(numbers, numbers.size());
+    }
+
+private:
+    std::vector<int> numbers;
+};
+
+int main() {
+    NumberCollection collection({10, 20, 30, 40});
+
+    for (auto it = collection.begin(); it != collection.end(); ++it) {
+        std::cout << *it << " ";
+    }
+
+    return 0;
+}
+~~~
+
+</details>
+
+<details>
+<summary>gestion des exceptions</summary>
+
+~~~cpp
+#include <iostream>
+#include <stdexcept>
+
+void checkValue(int value) {
+    if (value < 0) {
+        throw std::logic_error("Negative values are not allowed!");
+    }
+    std::cout << "Value is valid: " << value << std::endl;
+}
+
+int main() {
+    try {
+        checkValue(-5);
+    } catch (const std::logic_error& e) {
+        std::cerr << "Caught logic_error: " << e.what() << std::endl;
+    }
+    return 0;
+}
+~~~
+
+~~~cpp
+#include <iostream>
+#include <vector>
+#include <stdexcept>
+
+int main() {
+    try {
+        std::vector<int> vec = {1, 2, 3};
+        std::cout << "Accessing element at index 5: " << vec.at(5) << std::endl;
+    } catch (const std::out_of_range& e) {
+        std::cerr << "Caught out_of_range exception: " << e.what() << std::endl;
+    }
+
+    return 0;
+}
+~~~
+
+~~~cpp
+std::vector<int> vec = {1, 2, 3};
+try {
+   checkValue(-5);
+   std::cout << "vec.at(5) : " << vec.at(5) << std::endl;
+} catch (const std::out_of_range& e) {
+    std::cerr << "Specific handler: " << e.what() << std::endl;
+} catch (const std::logic_error& e) {
+    std::cerr << "General handler for logic_error: " << e.what() << std::endl;
+}
+~~~
+
+</details>
+
+<br>
 
 ### Modalités
 - à faire **par groupe de 2 étudiants**
-- 6 périodes
+- 8 périodes
 
 Bon travail
